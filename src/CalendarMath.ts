@@ -2,8 +2,7 @@ import { ICalendarItem, INormalizedCalendarItem, DateTimeFormatOption } from "./
 
 /*
 ***********************************************************
-This includes methods that are useful in displaying a 
-calendar. It has no state.
+这包括在显示日历时有用的方法。它没有状态。
 ***********************************************************
 */
 export default {
@@ -33,7 +32,7 @@ export default {
 	},
 
 	// ********************************************
-	// Date transforms that retain time of day
+	// 日期转换,保持每天的时间
 	// ********************************************
 
 	addDays(d: Date, days: number): Date {
@@ -48,21 +47,21 @@ export default {
 	},
 
 	// ********************************************
-	// Date transforms that ignore/wipe time of day
+	// Date转换忽略/删除一天中的时间
 	// ********************************************
 	beginningOfMonth: (d: Date): Date => new Date(d.getFullYear(), d.getMonth()),
 
 	instanceOfMonth: (d: Date): number => Math.ceil(d.getDate() / 7),
 
-	// This function increments a date by a given number of date units. Accepted units are: year, month, week. For year and month,
-	// the day of the month is unchanged. This could cause an unexpected result if the units are "month" and the starting day is
-	// higher than the number of days in the destination month. The count can be positive or negative.
+	//这个函数增量由给定的日期单位一个日期。接受单位为:年、月、周。一年又一个月，
+	//当月的日期不变。如果单位为“月”而起始日期为“月”，这可能会导致意想不到的结果
+	//高于目的月的天数。计数可以是正的也可以是负的。
 	incrementPeriod(d: Date, uom: string, count: number) {
 		return new Date(d.getFullYear() + (uom == "year" ? count : 0), d.getMonth() + (uom == "month" ? count : 0), d.getDate() + (uom == "week" ? count * 7 : 0))
 	},
 
 	// ******************************
-	// Date formatting
+	// Date 格式化
 	// ******************************
 
 	paddedMonth: (d: Date): string => ("0" + String(d.getMonth() + 1)).slice(-2),
@@ -78,10 +77,9 @@ export default {
 		return this.paddedMonth(d) + "-" + this.paddedDay(d)
 	},
 	formattedTime(d: Date, locale: string, options?: Intl.DateTimeFormatOptions | undefined): string {
-		// Assume midnight = "all day" or indeterminate time
+		// Assume midnight = "all day" or 不确定的 time
 		if (d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0) return ""
-		// If Intl is not supported, send back the 24-hour, zero-padded
-		// hours and minutes, expressed as local time.
+		// 如果不支持Intl，则发送回以当地时间表示的24小时、加零的小时和分钟。
 		if (!this.supportsIntl()) {
 			var ms = new Date().getTimezoneOffset() * 60000 // TZ offset in milliseconds
 			return new Date(d.getTime() - ms).toISOString().slice(11, 16)
@@ -133,12 +131,11 @@ export default {
 	},
 
 	// ******************************
-	// Date comparisons
+	// Date 比较
 	// ******************************
 
-	// Number of whole days between two dates. If present, time of day is ignored.
-	// Treats dates as UTC to avoid DST changes within the perioud leading to incorrect
-	// answers (#150).
+	// 两个日期之间的天数。 如果是现在，一天中的时间被忽略。
+	// 将日期视为UTC，以避免DST在时间段内的变化导致错误的答案(#150)。
 	dayDiff(d1: Date, d2: Date): number {
 		const endDate = Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate()),
 			startDate = Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate())
@@ -185,7 +182,7 @@ export default {
 	},
 
 	dateOnly(d: Date | string): Date {
-		// Always use a copy, setHours mutates argument
+		// 总是使用副本，setHours会改变参数
 		const d2 = new Date(d)
 		d2.setHours(0, 0, 0, 0)
 		return d2
@@ -200,25 +197,25 @@ export default {
 	supportsIntl: (): boolean => typeof Intl !== "undefined",
 
 	getFormattedMonthNames(locale: string, format: DateTimeFormatOption): Array<string> {
-		// Use the provided locale and format if possible to obtain the name of the month
+		// 如果可能的话，使用提供的区域设置和格式来获取月份的名称
 		if (!this.supportsIntl()) return [...Array(12)].map((_) => "")
 		const formatter = new Intl.DateTimeFormat(locale, { month: format })
-		// The year doesn't matter, using 2017 for convenience
+		// 哪一年不重要，就用2017年吧
 		return [...Array(12)].map((_, i) => formatter.format(new Date(2017, i, 1)))
 	},
 
 	getFormattedWeekdayNames(locale: string, format: DateTimeFormatOption, startingDayOfWeek: number): Array<string> {
-		// Use the provided locale and format if possible to obtain the name of the days of the week
+		// 如果可能的话，使用提供的区域设置和格式来获取星期几的名称
 		if (!this.supportsIntl()) return [...Array(7)].map((_) => "")
 		const formatter = new Intl.DateTimeFormat(locale, { weekday: format })
-		// 2017 starts on Sunday, so use it as the baseline date
+		// 2017年开始于周日，所以用它作为基准日期
 		return [...Array(7)].map((_, i) => formatter.format(new Date(2017, 0, (i + 1 + startingDayOfWeek) % 7)))
 	},
 
 	getDefaultBrowserLocale(): string {
-		// If not running in the browser, cannot determine a default, return the code for unknown (blank is invalid)
+		// 如果不是在浏览器中运行，无法确定默认值，则返回未知代码(空白无效)
 		if (typeof navigator === "undefined") return "unk"
-		// Return the browser's language setting, implementation is browser-specific
+		// 返回浏览器的语言设置，实现是特定的浏览器
 		return (navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language).toLowerCase()
 	},
 
@@ -226,22 +223,22 @@ export default {
 	// Calendar Items
 	// ******************************
 	normalizeItem(item: ICalendarItem, isHovered: boolean): INormalizedCalendarItem {
-		// Starting in version 6, classes must be an array of string
-		// Classes may be a string, an array, or null. Normalize to an array
+		//从版本6开始，类必须是字符串数组
+		//类可能是一个字符串, 一个数组, 或null。归一化到一个数组
 		const itemClasses = item.classes ? [...item.classes] : []
-		// Provides support for pseudo-hover of entire item when one part of it is hovered
+		// 当某部分悬停时，支持整个项目的伪悬停
 		if (isHovered) itemClasses.push("isHovered")
 		return {
 			originalItem: item,
 			startDate: this.toLocalDate(item.startDate),
-			// For an item without an end date, the end date is the start date
+			// 对于没有结束日期的项，结束日期为开始日期
 			endDate: this.toLocalDate(item.endDate || item.startDate),
 			classes: itemClasses,
-			// Items without a title are untitled
+			// 没有标题的项目是无标题的
 			title: item.title || "Untitled",
-			// An ID is *required*. Auto-generating leads to weird bugs because these are used as keys and passed in items
+			// 需要一个ID。自动生成会导致奇怪的错误，因为它们被用作键并在项中传递
 			id: item.id,
-			// Pass the URL along
+			// Pass the URL along 传递URL
 			url: item.url,
 		}
 	},

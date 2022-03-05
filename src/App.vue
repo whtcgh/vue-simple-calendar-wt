@@ -108,8 +108,8 @@ export default defineComponent({
 			return i
 		},
 		onDrop(item: INormalizedCalendarItem, date: Date) {
-			// Determine the delta between the old start date and the date chosen,
-			// and apply that delta to both the start and end date to move the item.
+			// 确定旧的开始日期和选定日期之间的增量，
+			//并将该增量应用于开始日期和结束日期以移动项目。
 			const eLength = CalendarMath.dayDiff(item.startDate, date)
 			item.originalItem.startDate = CalendarMath.addDays(item.startDate, eLength)
 			item.originalItem.endDate = CalendarMath.addDays(item.endDate, eLength)

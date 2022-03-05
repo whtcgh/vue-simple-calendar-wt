@@ -164,16 +164,16 @@ export default defineComponent({
 
 	computed: {
 		/*
-		Props cannot default to computed/method returns, so create defaulted version of this
-		property and use it rather than the bare prop (Vue Issue #6013).
+		Props不能默认为computed/method returns，因此创建此函数的默认版本
+		属性并使用它而不是裸道具(Vue Issue #6013)。
 		*/
 		displayLocale(): string {
 			return this.locale || CalendarMath.getDefaultBrowserLocale()
 		},
 
 		/*
-		ShowDate, but defaulted to today. Needed both for periodStart below and for the
-		"outside of month" class. Any time component passed as part of showDate is discarded.
+		ShowDate，但默认为今天。以下开始和为
+		“外部月” class。任何作为showDate的一部分传递的时间组件都会被丢弃。
 		*/
 		defaultedShowDate(): Date {
 			if (this.showDate) return CalendarMath.dateOnly(this.showDate)
@@ -181,8 +181,8 @@ export default defineComponent({
 		},
 
 		/*
-		Given the showDate, defaulted to today, computes the beginning and end of the period
-		that the date falls within.
+		给定默认为今天的showDate，计算时间段的开始和结束
+		日期正好在。
 		*/
 		periodStart(): Date {
 			return CalendarMath.beginningOfPeriod(this.defaultedShowDate, this.displayPeriodUom, this.startingDayOfWeek)
@@ -199,9 +199,9 @@ export default defineComponent({
 		},
 
 		/*
-		For month and year views, the first and last dates displayed in the grid may not
-		be the same as the intended period, since the period may not start and stop evenly
-		on the starting day of the week.
+		对于月和年视图，网格中显示的第一个和最后一个日期可能不是
+		与预期周期相同，因为周期可能不均匀开始和停止
+		在一周的第一天。
 		*/
 		displayFirstDate(): Date {
 			return CalendarMath.beginningOfWeek(this.periodStart, this.startingDayOfWeek)
@@ -212,17 +212,17 @@ export default defineComponent({
 		},
 
 		/*
-		Create an array of dates, where each date represents the beginning of a week that
-		should be rendered in the view for the current period.
+		创建一个日期数组，其中每个日期表示一周的开始
+		应在当前时期的视图中呈现。
 		*/
 		weeksOfPeriod(): Array<Date> {
-			// Returns an array of object representing the date of the beginning of each week
-			// included in the view.
+			//返回一个表示每周开始日期的对象数组
+			//视图中包含的。
 			const numWeeks = Math.floor((CalendarMath.dayDiff(this.displayFirstDate, this.displayLastDate) + 1) / 7)
 			return [...Array(numWeeks)].map((_, i) => CalendarMath.addDays(this.displayFirstDate, i * 7))
 		},
 
-		// Cache the names based on current locale and format settings
+		// 根据当前的区域设置和格式设置缓存名称
 		monthNames(): Array<string> {
 			return CalendarMath.getFormattedMonthNames(this.displayLocale, this.monthNameFormat)
 		},
@@ -231,14 +231,14 @@ export default defineComponent({
 			return CalendarMath.getFormattedWeekdayNames(this.displayLocale, this.weekdayNameFormat, this.startingDayOfWeek)
 		},
 
-		// Ensure all item properties have suitable default
+		// 确保所有项目属性都有合适的默认值
 		fixedItems(): Array<INormalizedCalendarItem> {
 			const self = this
 			if (!this.items) return []
 			return this.items.map((item) => CalendarMath.normalizeItem(item, item.id === self.currentHoveredItemId))
 		},
 
-		// Period that today's date sits within
+		// 今天日期所在的时间段
 		currentPeriodStart(): Date {
 			return CalendarMath.beginningOfPeriod(CalendarMath.today(), this.displayPeriodUom, this.startingDayOfWeek)
 		},
@@ -247,7 +247,7 @@ export default defineComponent({
 			return CalendarMath.addDays(CalendarMath.incrementPeriod(this.currentPeriodStart, this.displayPeriodUom, this.displayPeriodCount), -1)
 		},
 
-		// Creates the HTML to render the date range for the calendar header.
+		// 创建HTML来呈现日历标题的日期范围。
 		periodLabel(): string {
 			return CalendarMath.formattedPeriod(this.periodStart, this.periodEnd, this.displayPeriodUom, this.monthNames)
 		},
@@ -262,7 +262,7 @@ export default defineComponent({
 
 		headerProps(): IHeaderProps {
 			return {
-				// Dates for UI navigation
+				// Dates for UI 导航
 				previousYear: this.getIncrementedPeriod(-12),
 				previousPeriod: this.getIncrementedPeriod(-1),
 				nextPeriod: this.getIncrementedPeriod(1),
@@ -274,7 +274,7 @@ export default defineComponent({
 				// Dates for header display
 				periodStart: this.periodStart,
 				periodEnd: this.periodEnd,
-				// Extra information that could be useful to a custom header
+				// 可能对自定义标头有用的额外信息
 				displayLocale: this.displayLocale,
 				displayFirstDate: this.displayFirstDate,
 				displayLastDate: this.displayLastDate,
@@ -322,22 +322,22 @@ export default defineComponent({
 		},
 
 		/*
-		The day name header needs to know the dow for class assignment, and this value should
-		not change based on startingDayOfWeek (i.e., Sunday is always 0). This function
-		computes the dow for a given day index.
+		The day name header 需要知道类分配的dow，这个值应该
+		不根据startdayofweek(即，Sunday总是0)更改
+		计算给定日指数的道琼斯指数。
 		*/
 		getColumnDOWClass(dayIndex: number): string {
 			return "dow" + ((dayIndex + this.startingDayOfWeek) % 7)
 		},
 
 		// ******************************
-		// Date Periods
+		// Date 周期
 		// ******************************
 
 		/*
-		Returns a date for the current display date moved forward or backward by a given
-		number of the current display units. Returns null if said move would result in a
-		disallowed display period.
+		返回当前显示日期向前或向后移动给定日期的日期
+		当前显示单元的数量。如果move结果为a，则返回null
+		不允许显示时间。
 		*/
 		getIncrementedPeriod(count: number): Date | null {
 			const newStartDate = CalendarMath.incrementPeriod(this.periodStart, this.displayPeriodUom, count)
@@ -366,13 +366,13 @@ export default defineComponent({
 		},
 
 		// ******************************
-		// Dragging across days (selection)
+		// 拖拽时间(选择)
 		// ******************************
 
 		onDragDateStart(day: Date, windowEvent: DragEvent): boolean {
 			if (!this.enableDateSelection) return false
-			// Push the date where the selection started into dataTransfer. This is not used by this component, but
-			// a value required in Firefox and possibly other browsers.
+			//将选择开始的日期推送到datattransfer。这个组件不使用它，但是
+			//一个值需要在Firefox和可能的其他浏览器。
 			windowEvent.dataTransfer?.setData("text", day.toString())
 			let img = new Image()
 			img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
@@ -383,32 +383,32 @@ export default defineComponent({
 		},
 
 		// ******************************
-		// Drag and drop items
+		// 拖拽 and drop items
 		// ******************************
 
 		onDragItemStart(calendarItem: INormalizedCalendarItem, windowEvent: DragEvent): boolean {
 			if (!this.enableDragDrop) return false
-			// Firefox and possibly other browsers require dataTransfer to be set, even if the value is not used. IE11
-			// requires that the first argument be exactly "text" (not "text/plain", etc.). The calendar item's ID is
-			// passed, allowing calling applications to receive items dragged outside the component.
+			// Firefox和其他可能的浏览器需要设置datattransfer，即使这个值没有被使用。IE11
+			//要求第一个参数完全是“text”(而不是“text/plain”，等等)。日历项的ID为
+			//传入，允许调用应用程序接收拖出组件的项。
 			windowEvent.dataTransfer?.setData("text", calendarItem.id)
-			// However, we don't use dataTransfer within the component. Instead, we just keep a handled on the item
-			// currently being dragged. This avoids having to look it up later.
+			//但是，我们在组件中不使用dattransfer。相反，我们只是对项目进行处理
+			//当前被拖动。这样可以避免以后查找。
 			this.currentDragItem = calendarItem
-			// Reset date selection origin so the onenter events aren't confused
+			//重置日期选择原点，这样onenter事件就不会混淆
 			this.dateSelectionOrigin = null
-			// Allow the calling application to add additional functionality.
+			//允许调用程序添加额外的功能。
 			this.$emit("drag-start", calendarItem, windowEvent)
 			return true
 		},
 
 		handleDragEvent(bubbleEventName: "drag-over-date" | "drag-enter-date" | "drag-leave-date" | "drop-on-date", bubbleParam: any, windowEvent: Event): boolean {
 			if (!this.enableDragDrop) return false
-			// If the user drags an item FROM this calendar TO this calendar, currentDragItem will be initialized to the
-			// most recent item with a dragStart event. If not, we still emit the event, and the caller will need to
-			// determine what to do based on the third argument (windowEvent, which gives them access to `dataTransfer`).
-			// This allows developers to create custom calendars where things can be dragged in from the outside. This
-			// also allows developers using scoped slots for items to handle the drag and drop themselves.
+			//如果用户将一个项目从这个日历拖到这个日历，currentDragItem将被初始化为
+			//最近的dragStart事件。如果没有，我们仍然发出事件，调用者将需要
+			//根据第三个参数(windowwevent，这给他们访问' datattransfer ')来决定做什么。
+			//这允许开发者创建自定义日历，其中的东西可以从外部拖进来。这
+			//也允许开发人员使用有范围的槽来处理项目本身的拖放。
 			this.$emit(bubbleEventName, this.currentDragItem, bubbleParam, windowEvent)
 			return true
 		},
@@ -429,7 +429,7 @@ export default defineComponent({
 		},
 
 		onDragLeave(day: Date, windowEvent: Event): void {
-			// User is selecting dates, not items. No emit.
+			// 用户正在选择日期，而不是 Items。没有发出。
 			if (this.enableDateSelection && this.selectionStart) return
 			if (!this.handleDragEvent("drag-leave-date", day, windowEvent)) return
 			const el = windowEvent.target as HTMLElement
@@ -438,7 +438,7 @@ export default defineComponent({
 
 		onDrop(day: Date, windowEvent: Event): void {
 			if (this.enableDateSelection && this.dateSelectionOrigin) {
-				// User is selecting dates, not items.
+				//用户正在选择日期，而不是 Items
 				this.emitDateSelection("date-selection-finish", day, windowEvent)
 				return
 			}
@@ -453,7 +453,7 @@ export default defineComponent({
 		},
 
 		// ******************************
-		// Calendar Items
+		// 日历 Items
 		// ******************************
 
 		itemComparer(a: INormalizedCalendarItem, b: INormalizedCalendarItem) {
@@ -465,13 +465,13 @@ export default defineComponent({
 		},
 
 		findAndSortItemsInWeek(weekStart: Date): Array<INormalizedCalendarItem> {
-			// Return a list of items that INCLUDE any portion of a given week.
+			//返回包含给定一周的任意部分的项目列表。
 			return this.findAndSortItemsInDateRange(weekStart, CalendarMath.addDays(weekStart, 6))
 		},
 
 		findAndSortItemsInDateRange(startDate: Date, endDate: Date): Array<INormalizedCalendarItem> {
-			// Return a list of items that INCLUDE any day within the date range,
-			// inclusive, sorted so items that start earlier are returned first.
+			//返回包含日期范围内任意一天的项目列表，
+			// include，排序后，开始时间较早的项将首先返回。
 			return this.fixedItems.filter((item) => item.endDate >= startDate && CalendarMath.dateOnly(item.startDate) <= endDate, this).sort(this.itemComparer)
 		},
 
@@ -487,8 +487,8 @@ export default defineComponent({
 		},
 
 		getWeekItems(weekStart: Date): Array<INormalizedCalendarItem> {
-			// Return a list of items that CONTAIN the week starting on a day.
-			// Sorted so the items that start earlier are always shown first.
+			//返回包含从某天开始的一周的项目列表。
+			//排序，所以开始较早的项目总是显示在前面。
 			const items = this.findAndSortItemsInWeek(weekStart)
 			const results = []
 			const itemRows: Array<Array<boolean>> = [[], [], [], [], [], [], []]
@@ -522,8 +522,8 @@ export default defineComponent({
 		},
 
 		/*
-		Creates the HTML to prefix the item title showing the items start and/or
-		end time. Midnight is not displayed.
+		创建HTML来为项目标题添加前缀，显示项目的开始和/或
+		结束时间。不显示午夜。
 		*/
 		getFormattedTimeRange(item: INormalizedCalendarItem): string {
 			const startTime = '<span class="startTime">' + CalendarMath.formattedTime(item.startDate, this.displayLocale, this.timeFormatOptions) + "</span>"
@@ -542,7 +542,7 @@ export default defineComponent({
 		},
 
 		getItemTop(item: INormalizedCalendarItem): string {
-			// Compute the top position of the item based on its assigned row within the given week.
+			//在给定的周内，根据指定的行计算项目的顶部位置。
 			const r = item.itemRow
 			const h = this.itemContentHeight
 			const b = this.itemBorderHeight
@@ -558,16 +558,16 @@ export default defineComponent({
 </script>
 <!--
 
-The CSS below represents only the CSS required for proper rendering (positioning, etc.) and
-minimalist default borders and colors. Special-day colors, holiday emoji, item colors,
-and decorations like border-radius should be part of a theme. Styles related to the default
-header are in the CalendarViewHeader component.
+下面的CSS仅代表正确呈现(定位等)和所需的CSS
+最低限度的默认边框和颜色。节日的颜色，节日的表情符号，物品的颜色，
+像边框半径这样的装饰应该是主题的一部分。样式相关的默认
+header在CalendarViewHeader组件中。
 
 -->
 <style>
 /* Position/Flex */
 
-/* Make the calendar flex vertically */
+/* 让日历垂直伸缩 */
 .cv-wrapper {
 	display: flex;
 	flex-direction: column;
@@ -607,7 +607,7 @@ header are in the CalendarViewHeader component.
 	border-width: 1px 1px 0 0;
 }
 
-/* The calendar grid should take up the remaining vertical space */
+/* 日历网格应该占据剩余的垂直空间 */
 .cv-weeks {
 	display: flex;
 	flex-grow: 1;
@@ -616,7 +616,7 @@ header are in the CalendarViewHeader component.
 	flex-flow: column nowrap;
 	border-width: 0 0 1px 1px;
 
-	/* Allow grid to scroll if there are too may weeks to fit in the view */
+	/* 允许网格滚动，如果有可能几周无法适应视图 */
 	overflow-y: auto;
 	-ms-overflow-style: none;
 }
@@ -630,11 +630,11 @@ header are in the CalendarViewHeader component.
 	line-height: 1;
 }
 
-/* Use flex basis of 0 on week row so all weeks will be same height regardless of content */
+/* 使用弹性基础0周行，所以所有周将是相同的高度，无论内容 */
 .cv-week {
 	display: flex;
 
-	/* Shorthand flex: 1 1 0 not supported by IE11 */
+	/* 简写flex: 1 10 0不支持IE11 */
 	flex-grow: 1;
 	flex-shrink: 1;
 	flex-basis: 0;
@@ -642,7 +642,7 @@ header are in the CalendarViewHeader component.
 	min-height: 3em;
 	border-width: 0;
 
-	/* Allow week items to scroll if they are too tall */
+	/* 允许周项目滚动，如果他们太高 */
 	position: relative;
 	width: 100%;
 	overflow-y: auto;
@@ -652,13 +652,13 @@ header are in the CalendarViewHeader component.
 .cv-weekdays {
 	display: flex;
 
-	/* Shorthand flex: 1 1 0 not supported by IE11 */
+	/* 简写flex: 1 10 0不支持IE11 */
 	flex-grow: 1;
 	flex-shrink: 0;
 	flex-basis: 0;
 	flex-flow: row nowrap;
 
-	/* Days of the week go left to right even if user's language is RTL (#138) */
+	/* 即使用户的语言是RTL(#138)，一周的天数也从左往右排列 */
 	direction: ltr;
 	position: relative;
 	overflow-y: auto;
@@ -667,16 +667,16 @@ header are in the CalendarViewHeader component.
 .cv-day {
 	display: flex;
 
-	/* Shorthand flex: 1 1 0 not supported by IE11 */
+	/* 简写flex: 1 10 0不支持IE11 */
 	flex-grow: 1;
 	flex-shrink: 0;
 	flex-basis: 0;
-	position: relative; /* Fallback for IE11, which doesn't support sticky */
-	position: sticky; /* When week's items are scrolled, keep the day content fixed */
+	position: relative; /* 支持IE11，它不支持sticky */
+	position: sticky; /* 当滚动星期的项目时，保持固定的日期内容 */
 	top: 0;
 	border-width: 1px 1px 0 0;
 
-	/* Restore user's direction setting (overridden for week) */
+	/* 恢复用户方向设置(覆盖一周) */
 	direction: initial;
 }
 
@@ -686,13 +686,13 @@ header are in the CalendarViewHeader component.
 }
 
 /*
-A bug in Microsoft Edge 41 (EdgeHTML 16) has been reported (#109) where days "disappear" because they are
-wrapping under the next week (despite the "nowrap" on cv-week). This appears to be an issue specifically
-with our metrics and the sticky positioning. I was not able to reproduce this issue in Edge 38, 42, or 44.
-I'm reticent to turn off the sticky functionality for all Edge users because of one version (or perhaps an
-interaction of that version with a specific graphics adapter or other setting). So instead, I'm leaving this
-as an example for anyone forced to support Edge 41 who may see the same issue. If that's the case, just
-add this selector to your own CSS.
+微软Edge 41 (EdgeHTML 16)有一个bug(#109)，其中天“消失”了，因为它们本来就是
+在接下来的一周(尽管在简历周上有“nowrap”)。这似乎是一个特别的问题
+我们的指标和粘性定位。我无法在Edge 38、42或44中重现这个问题。
+我不愿关闭所有Edge用户的粘性功能，因为一个版本(或者一个
+该版本与特定图形适配器或其他设置的交互)。所以我把这个留在这里
+作为一个例子，任何被迫支持Edge 41的人可能会看到同样的问题。如果是这样的话，就
+把这个选择器添加到你自己的CSS中。
 
 @supports (-ms-ime-align: auto) {
 	.cv-day {
@@ -721,11 +721,11 @@ _:-ms-lang(x),
 	background-color: #f7f7f7;
 	border-width: 1px;
 
-	/* Restore user's direction setting (overridden for week) */
+	/* 恢复用户方向设置(覆盖一周) */
 	direction: initial;
 }
 
-/* Wrap to show entire item title on hover */
+/* 在悬停时Wrap显示整个项目标题 */
 .cv-wrapper.wrap-item-title-on-hover .cv-item:hover {
 	white-space: normal;
 	z-index: 1;
@@ -755,7 +755,7 @@ _:-ms-lang(x),
 	padding: 0.2em;
 }
 
-/* Allows emoji icons or labels (such as holidays) to be added more easily to specific dates by having the margin set already. */
+/* 允许表情符号图标或标签(如节日)更容易添加到特定日期，通过设置边距。 */
 .cv-day-number::before {
 	margin-right: 0.5em;
 }
@@ -788,7 +788,7 @@ _:-ms-lang(x),
 	left: calc((600% / 7));
 }
 
-/* Metrics for items spanning dates */
+/* 跨越日期的项的度量 */
 
 .cv-item.span1 {
 	width: calc((100% / 7) - 0.05em);
@@ -818,10 +818,10 @@ _:-ms-lang(x),
 	width: calc((700% / 7) - 0.05em);
 }
 
-/* Hide scrollbars for the grid and the week */
+/* 隐藏网格和星期的滚动条 */
 .cv-weeks::-webkit-scrollbar,
 .cv-week::-webkit-scrollbar {
-	width: 0; /* remove scrollbar space */
-	background: transparent; /* optional: just make scrollbar invisible */
+	width: 0; /* remove 滚动条 space */
+	background: transparent; /* 可选:只是让滚动条不可见 */
 }
 </style>
