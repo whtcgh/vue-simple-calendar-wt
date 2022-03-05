@@ -1,18 +1,18 @@
 {
-	"name": "vue-simple-calendar",
-	"version": "6.0.4",
+	"name": "vue-simple-calendar-wt",
+	"version": "1.0.2",
 	"private": false,
 	"description": "Simple Vue 3 calendar event control",
 	"author": "richardtallent <richard@tallent.us>",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/richardtallent/vue-simple-calendar"
+		"url": "https://github.com/richardtallent/vue-simple-calendar-wt"
 	},
-	"homepage": "https://tallent.us/vue-simple-calendar/",
-	"main": "./dist/vue-simple-calendar.umd.js",
-	"module": "./dist/vue-simple-calendar.es.js",
-	"types": "./dist/vue-simple-calendar.d.js",
+	"homepage": "https://tallent.us/vue-simple-calendar-wt/",
+	"main": "./dist/vue-simple-calendar-wt.umd.js",
+	"module": "./dist/vue-simple-calendar-wt.es.js",
+	"types": "./dist/vue-simple-calendar-wt.d.js",
 	"style": "./dist/style.css",
 	"files": [
 		"dist",
@@ -20,8 +20,8 @@
 	],
 	"exports": {
 		".": {
-			"import": "./dist/vue-simple-calendar.es.js",
-			"require": "./dist/vue-simple-calendar.umd.js"
+			"import": "./dist/vue-simple-calendar-wt.es.js",
+			"require": "./dist/vue-simple-calendar-wt.umd.js"
 		}
 	},
 	"scripts": {
