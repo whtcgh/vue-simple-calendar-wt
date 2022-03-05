@@ -26,23 +26,29 @@
 		</div>
 	</div>
 </template>
-<script setup lang="ts">
+<script lang="ts">
+import { defineComponent } from "vue"
 import { IHeaderProps } from "./IHeaderProps"
 
-defineProps({
-	headerProps: {
-		type: Object as () => IHeaderProps,
-		required: true,
+export default defineComponent({
+	name: "CalendarViewHeader",
+	props: {
+		headerProps: {
+			type: Object as () => IHeaderProps,
+			required: true,
+		},
+		previousYearLabel: { type: String, default: "<<" },
+		previousPeriodLabel: { type: String, default: "<" },
+		nextPeriodLabel: { type: String, default: ">" },
+		nextYearLabel: { type: String, default: ">>" },
 	},
-	previousYearLabel: { type: String, default: "<<" },
-	previousPeriodLabel: { type: String, default: "<" },
-	nextPeriodLabel: { type: String, default: ">" },
-	nextYearLabel: { type: String, default: ">>" },
+	emits: ["input"],
+	methods: {
+		onInput(d: Date) {
+			this.$emit("input", d)
+		},
+	},
 })
-
-const emit = defineEmits(["input"])
-
-const onInput = (d: Date) => emit("input", d)
 </script>
 <style>
 .cv-header {
